@@ -1,13 +1,16 @@
 <?php
 
-$keyword = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $keyword = $_POST['keyword'];
-}
-
 // 関数ファイルを読み込む
 require_once __DIR__ . '/functions.php';
+
+if (empty($_GET['keyword'])) {
+    $keyword = '';
+} else {
+    $keyword = $_GET['keyword'];
+}
+
+// バインドするパラメータの準備(更新情報の準備)
+$description = '%' . $keyword . '%';
 
 // データベースに接続
 $dbh = connect_db();
@@ -21,9 +24,6 @@ EOM;
 
 // プリペアドステートメントの準備
 $stmt = $dbh->prepare($sql);
-
-// バインドするパラメータの準備(更新情報の準備)
-$description = '%' . $keyword . '%';
 
 // パラメータのバインド
 $stmt->bindParam(':description', $description, PDO::PARAM_STR);
@@ -42,12 +42,12 @@ $animals = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDO - INSERT</title>
+    <title>PDO - Petshop</title>
 </head>
 
 <body>
     <h2>本日のご紹介ペット！</h2>
-    <form action="" method="post">
+    <form action="" method="get">
         <div>
             <label for="keyword">キーワード</label>
             <input type="text" id="keyword" name="keyword">
